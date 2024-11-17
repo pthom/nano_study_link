@@ -139,7 +139,7 @@ typename std::enable_if_t<std::is_same_v<T,nb::tuple>||std::is_same_v<T,nb::list
 }
 
 
-NB_MODULE(_pybind_imgui, m)
+NB_MODULE(_nanobind_imgui, m)
 {
 
     ///////////////////////////////////////////////////////////////////////////

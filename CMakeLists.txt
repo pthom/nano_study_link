@@ -1,6 +1,12 @@
 cmake_minimum_required(VERSION 3.19)
 project(nano_study_link LANGUAGES CXX)
 
+# Define STUDY_PYBIND11 either from the environment variable or from the CMake option to build with pybind11
+option(STUDY_PYBIND11 "Build pybind11 bindings" OFF)
+if (DEFINED ENV{STUDY_PYBIND11} AND "$ENV{STUDY_PYBIND11}" STREQUAL "ON")
+    set(STUDY_PYBIND11 ON)
+endif()
+
 set(CMAKE_CXX_STANDARD 17)
 
 # Add imgui (a custom version, from imgui bundle, very close to the original)
@@ -28,8 +34,17 @@ macro(setup_nanobind)
     add_subdirectory(nanobind)
 endmacro()
 
-# Build nanobind bindings
-setup_nanobind()
-nanobind_add_module(nanobind_imgui nanobind_imgui.cpp)
-target_link_libraries(nanobind_imgui PRIVATE imgui)
 
+if (STUDY_PYBIND11)
+    message(STATUS "Building pybind11 bindings")
+    message(STATUS "====================================")
+    add_subdirectory(pybind11)
+    pybind11_add_module(pybind11_imgui pybind11_imgui.cpp)
+    target_link_libraries(pybind11_imgui PRIVATE imgui)
+else()
+    message(STATUS "Building nanobind bindings")
+    message(STATUS "====================================")
+    setup_nanobind()
+    nanobind_add_module(nanobind_imgui nanobind_imgui.cpp)
+    target_link_libraries(nanobind_imgui PRIVATE imgui)
+endif()
