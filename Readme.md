@@ -18,3 +18,21 @@ time pip install -v .
 => pip install -v .  29.34s user 1.91s system 218% cpu 14.287 total
 ```
 
+
+### Windows
+
+With pybind11:
+```
+export STUDY_PYBIND11=ON   # using git bash
+time pip install -v .
+=> pip install -v . 
+real    1m44.208s
+user    0m0.015s
+sys     0m0.000s
+```
+
+With nanobind:
+```
+export STUDY_PYBIND11=OFF  # using git bash
+time pip install -v .
+```
