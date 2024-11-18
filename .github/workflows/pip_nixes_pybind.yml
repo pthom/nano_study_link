@@ -1,0 +1,45 @@
+name: "pip_nixes_pybind"
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+
+jobs:
+  build:
+    name: pip_nixes_pybind
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: 3.13
+
+      #    - name: Setup interactive tmate session
+      #      uses: mxschmitt/action-tmate@v3
+
+      - name: build as C++ - log size
+        shell: bash
+        run: |
+          python --version
+          export STUDY_PYBIND11=ON
+          mkdir build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release
+          cmake --build . --config Release
+          for f in $(find . -name "*.so"); do ls -alh $f; done
+
+      - name: Upload .so artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: compiled-so-files
+          path: |
+            build/**/*.so

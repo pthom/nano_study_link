@@ -13,21 +13,40 @@ if (DEFINED ENV{STUDY_PYBIND11} AND "$ENV{STUDY_PYBIND11}" STREQUAL "ON")
 endif()
 
 # Disable optimizations
-option(STUDY_OPTIM_DISABLE "Disable optimizations (/Og)" OFF)
-if (DEFINED ENV{STUDY_OPTIM_DISABLE} AND "$ENV{STUDY_OPTIM_DISABLE}" STREQUAL "ON")
-    set(STUDY_OPTIM_DISABLE ON)
+option(STUDY_OPTIM_DISABLED "Disable optimizations (/Og)" OFF)
+if (DEFINED ENV{STUDY_OPTIM_DISABLED} AND "$ENV{STUDY_OPTIM_DISABLED}" STREQUAL "ON")
+    set(STUDY_OPTIM_DISABLED ON)
 endif()
 
-# Optimize for size
+# Optimize for size /Os (nanobind default)
 option(STUDY_OPTIM_SIZE "Optimize for size (/Os)" OFF)
 if (DEFINED ENV{STUDY_OPTIM_SIZE} AND "$ENV{STUDY_OPTIM_SIZE}" STREQUAL "ON")
     set(STUDY_OPTIM_SIZE ON)
 endif()
 
-# Optimize /O1 instead of default /O2
+# Optimize /O1
 option(STUDY_OPTIM_O1 "Optimize O1 (/O1) - close to /Os" OFF)
 if (DEFINED ENV{STUDY_OPTIM_O1} AND "$ENV{STUDY_OPTIM_O1}" STREQUAL "ON")
     set(STUDY_OPTIM_O1 ON)
+endif()
+
+# Optimize /O2
+option(STUDY_OPTIM_O2 "Optimize O2 (/O2)" OFF)
+if (DEFINED ENV{STUDY_OPTIM_O2} AND "$ENV{STUDY_OPTIM_O2}" STREQUAL "ON")
+set(STUDY_OPTIM_O2 ON)
+endif()
+
+# Optimize O3 on *nixes
+option(STUDY_OPTIM_O3 "Optimize O3 (-O3)" OFF)
+if (DEFINED ENV{STUDY_OPTIM_O3} AND "$ENV{STUDY_OPTIM_O3}" STREQUAL "ON")
+    set(STUDY_OPTIM_O3 ON)
+endif()
+
+
+
+# Global flag
+if (UNIX)
+    add_compile_options(-fPIC)
 endif()
 
 
@@ -72,7 +91,7 @@ else()
     nanobind_add_module(nanobind_imgui nanobind_imgui.cpp)
     target_link_libraries(nanobind_imgui PRIVATE imgui)
 
-    if (STUDY_OPTIM_DISABLE)
+    if (STUDY_OPTIM_DISABLED)
         message(STATUS "Disabling optimizations /Od")
         message(STATUS "====================================")
          target_compile_options(nanobind_imgui PRIVATE $<$<CONFIG:Release>:/Od>)
@@ -86,5 +105,15 @@ else()
         message(STATUS "Optimizing O1 /O1")
         message(STATUS "====================================")
          target_compile_options(nanobind_imgui PRIVATE $<$<CONFIG:Release>:/O1>)
+    endif()
+    if (STUDY_OPTIM_O2)
+        message(STATUS "Optimizing O2 /O2")
+        message(STATUS "====================================")
+        target_compile_options(nanobind_imgui PRIVATE $<$<CONFIG:Release>:/O2>)
+    endif()
+    if (STUDY_OPTIM_O3)
+        message(STATUS "Optimizing O3 -O3")
+        message(STATUS "====================================")
+        target_compile_options(nanobind_imgui PRIVATE $<$<CONFIG:Release>:-O3>)
     endif()
 endif()

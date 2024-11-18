@@ -1,38 +1,39 @@
 # Study link issue with nanobind
 
 ## Benchmark
-
-### macOS
-
-With pybind11:
-```
-export STUDY_PYBIND11=ON
-time pip install -v .
-=> pip install -v .  157.87s user 8.47s system 106% cpu 2:35.60 total
-```
-
-With nanobind:
-```
-export STUDY_PYBIND11=OFF
-time pip install -v .
-=> pip install -v .  29.34s user 1.91s system 218% cpu 14.287 total
-```
+| Platform   | Library   |   Lib Size (MB) | Options                               | Time       |
+|:-----------|:----------|----------------:|:--------------------------------------|:-----------|
+| linux      | pybind11  |             4.9 | default                               | 3m 21s     |
+| linux      | nanobind  |             2.6 | default                               | 1m 37s     |
+| windows    | pybind11  |             3.2 | default                               | 3m 02s     |
+| windows    | nanobind  |             5.3 | no optim                              | 1m 59s     |
+| windows    | nanobind  |             2.2 | default optim (/Os cf nanobind cmake) | 2h 28m (!) |
+| windows    | nanobind  |             2.2 | /O1 (close to /Os)                    | 2h 18m (!)    |
+| windows    | nanobind  |             2.2 | /Os (optim size)                      | 2h 22m (!)    |
 
 
-### Windows
+## Benchmark in imgui-bundle
 
-With pybind11:
-```
-export STUDY_PYBIND11=ON   # using git bash
-time pip install -v .
-=> pip install -v . 
-real    1m44.208s
-user    0m0.015s
-sys     0m0.000s
-```
+Wheels built for:
+- python 3.11, 3.12 and 3.13
+- macOS: arm and intel
+- ubuntu: all x64 platforms (no arm, no 32 bits)
+- windows: x64 (no 32 bits, nor arm). Built with /Od (no optimization)
 
-With nanobind:
-```
-export STUDY_PYBIND11=OFF  # using git bash
-time pip install -v .
-```
+
+| Library   | OS             |   Build time (min) |   Size (MB) |
+|:----------|:---------------|-------------------:|------------:|
+| pybind11  | macos-latest   |               50.7 |        63.3 |
+| pybind11  | ubuntu-latest  |               90   |       179   |
+| pybind11  | windows-latest |               29.4 |       118   |
+| nanobind  | macos-latest   |               13.1 |        58.3 |
+| nanobind  | ubuntu-latest  |               61   |       165   |
+| nanobind  | windows-latest |               22.2 |       124   |
+
+Total sizes for each library:
+
+| Library   | Binary wheels Size (MB) | Source distribution (MB) |
+|:----------|-------------------------|-------------------------:|
+| nanobind  | 347.3                   |                     39.6 |
+| pybind11  | 360.3                   |                     39.5 |
+
