@@ -1,27 +1,7 @@
 // Part of ImGui Bundle - MIT License - Copyright (c) 2022-2024 Pascal Thomet - https://github.com/pthom/imgui_bundle
 #include <nanobind/nanobind.h>
-#include <nanobind/trampoline.h>
-#include <nanobind/stl/array.h>
-#include <nanobind/stl/string.h>
-#include <nanobind/stl/vector.h>
-#include <nanobind/stl/optional.h>
-#include <nanobind/stl/function.h>
-#include <nanobind/stl/shared_ptr.h>
-#include <nanobind/stl/unique_ptr.h>
-#include <nanobind/stl/map.h>
-#include <nanobind/stl/tuple.h>
-#include <nanobind/make_iterator.h>
-#include <nanobind/ndarray.h>
-
 
 namespace nb = nanobind;
-
-
-#include "imgui.h"
-#include "imgui_internal.h"
-
-using uint = unsigned int;
-using uchar = unsigned char;
 
 void nanobind_imgui_part1(nb::module_& m);
 void nanobind_imgui_part2(nb::module_& m);
