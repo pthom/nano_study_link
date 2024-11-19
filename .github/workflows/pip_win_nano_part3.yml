@@ -1,4 +1,4 @@
-name: "pip_win_nano_full_od"
+name: "pip_win_nano_part3"
 
 on:
   workflow_dispatch:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    name: pip_win_nano_full_od
+    name: pip_win_nano_part3
     runs-on: windows-latest
 
     steps:
@@ -26,8 +26,7 @@ jobs:
         shell: bash
         run: |
           python --version
-          export STUDY_BUILD_PARTS=full
-          export STUDY_OPTIM_DISABLED=ON
+          export STUDY_BUILD_PARTS=part3
           mkdir build
           cd build
           cmake .. -DCMAKE_BUILD_TYPE=Release
