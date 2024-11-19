@@ -15,6 +15,10 @@ void nanobind_imgui_part2(nb::module_& m);
 
 NB_MODULE(_nanobind_imgui, m)
 {
+#ifdef STUDY_BUILD_PARTS_PART1
     nanobind_imgui_part1(m);
+#endif
+#ifdef STUDY_BUILD_PARTS_PART2
     nanobind_imgui_part2(m);
+#endif
 }
