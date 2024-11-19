@@ -1,0 +1,41 @@
+name: "pip_win_nano_part2"
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+
+jobs:
+  build:
+    name: pip_win_nano_part2
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: 3.13
+
+      #    - name: Setup interactive tmate session
+      #      uses: mxschmitt/action-tmate@v3
+
+      - name: build as C++ - log size
+        shell: bash
+        run: |
+          python --version
+          export STUDY_BUILD_PARTS=part2
+          mkdir build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release
+          cmake --build . --config Release --verbose
+          for f in $(find . -name "*.pyd"); do ls -alh $f; done
+
+      - name: Upload .pyd artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: compiled-pyd-files
+          path: |
+            build/**/*.pyd

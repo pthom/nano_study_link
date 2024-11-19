@@ -42,6 +42,19 @@ if (DEFINED ENV{STUDY_OPTIM_O3} AND "$ENV{STUDY_OPTIM_O3}" STREQUAL "ON")
     set(STUDY_OPTIM_O3 ON)
 endif()
 
+# Options / which part to build: select between
+# - part1: build only nanobind_imgui_master.cpp + nanobind_imgui_part1.cpp
+# - part2: build only nanobind_imgui_master.cpp + nanobind_imgui_part2.cpp
+# - parts: build nanobind_imgui_master.cpp + nanobind_imgui_part1.cpp + nanobind_imgui_part2.cpp and link them together
+# - full: build nanobind_imgui_master.cpp + nanobind_imgui.cpp (full version)
+option(STUDY_BUILD_PARTS "Build type (Release, Debug, MinSizeRel, RelWithDebInfo)" "Release")
+if (DEFINED ENV{STUDY_BUILD_PARTS})
+    set(STUDY_BUILD_PARTS $ENV{STUDY_BUILD_PARTS})
+endif()
+# Shout if not defined
+if (NOT STUDY_BUILD_PARTS)
+    message(FATAL_ERROR "STUDY_BUILD_PARTS is not defined")
+endif()
 
 
 # Global flag
@@ -88,8 +101,22 @@ else()
     message(STATUS "Building nanobind bindings")
     message(STATUS "====================================")
     setup_nanobind()
-#    nanobind_add_module(nanobind_imgui nanobind_imgui.cpp)
-    nanobind_add_module(nanobind_imgui nanobind_imgui_master.cpp nanobind_imgui_part1.cpp nanobind_imgui_part2.cpp)
+
+    #    nanobind_add_module(nanobind_imgui nanobind_imgui.cpp)
+    # nanobind_add_module(nanobind_imgui nanobind_imgui_master.cpp nanobind_imgui_part1.cpp nanobind_imgui_part2.cpp)
+
+    if (STUDY_BUILD_PARTS STREQUAL "part1")
+        nanobind_add_module(nanobind_imgui nanobind_imgui_master.cpp nanobind_imgui_part1.cpp)
+    elseif (STUDY_BUILD_PARTS STREQUAL "part2")
+        nanobind_add_module(nanobind_imgui nanobind_imgui_master.cpp nanobind_imgui_part2.cpp)
+    elseif (STUDY_BUILD_PARTS STREQUAL "parts")
+        nanobind_add_module(nanobind_imgui nanobind_imgui_master.cpp nanobind_imgui_part1.cpp nanobind_imgui_part2.cpp)
+    else()
+        nanobind_add_module(nanobind_imgui nanobind_imgui.cpp)
+    endif()
+    message(STATUS "STUDY_BUILD_PARTS: ${STUDY_BUILD_PARTS}")
+    message(STATUS "=============================================")
+
     target_link_libraries(nanobind_imgui PRIVATE imgui)
 
     if (STUDY_OPTIM_DISABLED)
