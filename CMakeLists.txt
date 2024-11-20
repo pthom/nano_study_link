@@ -58,6 +58,17 @@ add_library(imgui STATIC
 target_compile_definitions(imgui PUBLIC IMGUI_BUNDLE_PYTHON_API)
 target_include_directories(imgui PUBLIC imgui)
 
+function(nanobind_disable_forceinline)
+    set(nb_defs_file ${CMAKE_CURRENT_LIST_DIR}/nanobind/include/nanobind/nb_defs.h)
+    # Replace
+    #     #  define NB_INLINE          __forceinline
+    # By
+    #     #  define NB_INLINE          inline
+    file(READ ${nb_defs_file} nb_defs_content)
+    string(REPLACE "#  define NB_INLINE          __forceinline" "#  define NB_INLINE          inline" nb_defs_content "${nb_defs_content}")
+    file(WRITE ${nb_defs_file} "${nb_defs_content}")
+endfunction()
+
 
 # From https://nanobind.readthedocs.io/en/latest/building.html
 macro(setup_nanobind)
@@ -72,6 +83,7 @@ macro(setup_nanobind)
         set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
         set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
     endif()
+    nanobind_disable_forceinline()
     add_subdirectory(nanobind)
 endmacro()
 
